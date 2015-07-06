@@ -1,2 +1,2 @@
-# SpecImg
-Test for transmitting an image in a spectrum
+# SpecView
+Test for transmitting a simple grayscale image in an audio spectrum.
