@@ -8,6 +8,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var uglify = require('gulp-uglify');
 var babel = require('babelify');
+var rimraf = require('rimraf');
 
 function compile(watch) {
   var bundler = watchify(browserify('./src/index.js', { debug: true }).transform(babel));
@@ -35,9 +36,16 @@ function compile(watch) {
 
 function watch() {
   return compile(true);
-};
+}
 
 gulp.task('build', function() { return compile(); });
+gulp.task('copy', function(){
+	gulp.src('html/*').pipe(gulp.dest('build'));
+});
+
 gulp.task('watch', function() { return watch(); });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['copy','watch']);
+gulp.task('clean', function(cb) {
+	rimraf('./build', cb);
+});

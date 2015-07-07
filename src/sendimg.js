@@ -1,50 +1,37 @@
 /**
- * Jdigi
- *
- * Copyright 2015, Bob Jamison
- *
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation, either version 3 of the License, or
- *    (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
- *
- *    You should have received a copy of the GNU General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Convert the image into float audio samples
  */
 
 import {Complex} from "./math";
 import {AudioOutput} from "./audio";
+import {FFTSR} from "./fft";
 
-function SpecView() {
-
-	var audio = new AudioOutput(null);
-
+class SpecView {
 
 
+	constructor() {
+		this.audio = new AudioOutput(null);
+		this.sampleRate = this.audio.sampleRate;
+		this.trace("samplerate: " + this.sampleRate);
+	}
+
+	status(msg) {
+		console.log("specview: "+ msg);
+	}
+
+	trace(msg) {
+		console.log("specview: "+ msg);
+	}
+
+	prepare(grayImg) {
 
 
+	}
 
+	send() {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	}
 
 }
+
+export {SpecView};

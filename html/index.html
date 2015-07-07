@@ -1,67 +1,11 @@
 <html>
 <head>
 
-
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="application/javascript" src="build.js"></script>
 <script>
 
-    var grayImage = {
-        width: 50,
-        height: 50,
-        data: []   //rows of columns
-    };
 
-    function loadIntoBuffer(imageObj) {
-        var clr_canvas = document.getElementById('clr_img');
-        var clrctx = clr_canvas.getContext('2d');
-        var gray_canvas = document.getElementById('gray_img');
-        var grayctx = gray_canvas.getContext('2d');
-
-        var imageWidth = imageObj.width;
-        var imageHeight = imageObj.height;
-        grayImage.width = imageWidth;
-        grayImage.height = imageHeight;
-        grayImage.data = [];
-
-        clrctx.drawImage(imageObj, 0, 0);
-
-        var clrImgData = clrctx.getImageData(0, 0, imageWidth, imageHeight);
-        var clrData = clrImgData.data;
-        var grayImgData = grayctx.getImageData(0, 0, imageWidth, imageHeight);
-        var grayData = grayImgData.data;
-
-        // iterate over all pixels
-        var i = 0;
-        var j = 0;
-        for (row = 0; row < imageHeight; row++) {
-            var r = new Float32Array(imageWidth);
-
-            for (col = 0; col < imageWidth; col++) {
-                var red = clrData[i++];
-                var green = clrData[i++];
-                var blue = clrData[i++];
-                var alpha = clrData[i++];
-                var gray = (red + green + blue) * 0.33;
-                grayData[j++] = gray;
-                grayData[j++] = gray;
-                grayData[j++] = gray;
-                grayData[j++] = alpha;
-                r[col] = gray;
-            }
-            grayImage.data[row] = r;
-        }
-        grayctx.putImageData(grayImgData, 0, 0);
-
-    }
-
-    var imageObj = new Image();
-    imageObj.onload = function () {
-        loadIntoBuffer(this);
-    };
-    imageObj.src = "colonel.png";
-
-    function send() {
-    }
-      
 </script>
 
 
@@ -79,14 +23,12 @@
 
 <br />
 
-<button onclick="send()">Send</button>
-
-
-
-
-
-
-
+<button id="prepareBtn">Prepare</button>
+<br />
+<button id="sendBtn">Send</button>
+<br />
+<textarea id="statusTxt" readonly="true" rows="5 cols=30">
+</textarea>
 
 
 
