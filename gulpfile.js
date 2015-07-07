@@ -1,9 +1,12 @@
+'use strict';
+
 var gulp = require('gulp');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var browserify = require('browserify');
 var watchify = require('watchify');
+var uglify = require('gulp-uglify');
 var babel = require('babelify');
 
 function compile(watch) {
@@ -15,6 +18,7 @@ function compile(watch) {
       .pipe(source('build.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(uglify({ mangle: false }))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest('./build'));
   }
