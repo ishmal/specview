@@ -50,15 +50,15 @@ class App {
 		// iterate over all pixels
 		var i = 0;
 		var j = 0;
-		for (var row = 0; row < imageHeight; row++) {
-			var r = new Float32Array(imageWidth);
+		for (let row = 0; row < imageHeight; row++) {
+			let r = new Float32Array(imageWidth);
 
-			for (var col = 0; col < imageWidth; col++) {
-				var red = clrData[i++];
-				var green = clrData[i++];
-				var blue = clrData[i++];
-				var alpha = clrData[i++];
-				var gray = (red + green + blue) * 0.33;
+			for (let col = 0; col < imageWidth; col++) {
+				let red = clrData[i++];
+				let green = clrData[i++];
+				let blue = clrData[i++];
+				let alpha = clrData[i++];
+				let gray = (red + green + blue) * 0.33;
 				grayData[j++] = gray;
 				grayData[j++] = gray;
 				grayData[j++] = gray;

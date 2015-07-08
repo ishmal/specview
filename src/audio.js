@@ -57,7 +57,7 @@ function AudioOutput(par) {
 		}
 		var output  = e.outputBuffer.getChannelData(0);
 		var len = output.length;
-		for (var i=0 ; i < len ; i++) {
+		for (let i=0 ; i < len ; i++) {
 			if (dataIdx >= dataLen) {
 				output[i] = 0;
 				hasMoreData = false;
