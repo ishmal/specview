@@ -17,64 +17,78 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- 
 
 /**
  * Getting this to work with interpolation isn't easy
  */
-function AudioOutput(par) {
-    var self = this;
+class AudioOutput {
 
-    var scriptNodes = {};
-    var keep = (function () {
-        var nextNodeID = 1;
-        return function (node) {
-            node.id = node.id || (nextNodeID++);
-            scriptNodes[node.id] = node;
-            return node;
-        };
-    }());
 
-    var actx = new AudioContext();
-    this.sampleRate = actx.sampleRate;
+    constructor(par) {
+        this.par = par;
+        this.scriptNodes = {};
+        this.keep = (function () {
+            var nextNodeID = 1;
+            return function (node) {
+                node.id = node.id || (nextNodeID++);
+                this.scriptNodes[node.id] = node;
+                return node;
+            };
+        }());
+        this.actx = new AudioContext();
+        this.sampleRate = this.actx.sampleRate;
+        this.dataIdx = 0;
+        this.data = [];
+        this.dataLen = 0;
+        this.hasMoreData = false;
+    }
+
 
     
-    var dataIdx = 0;
-    var data = [];
-    var dataLen = 0;
-    var hasMoreData = false;
-    
-    this.send = function(audioData) {
-    	dataIdx = 0;
-    	data = audioData;
-    	dataLen = data.length;
-    	hasMoreData = true;
-    };
-    
-    function needMoreSamples(e) {
+
+    send(audioData) {
+    	this.dataIdx = 0;
+    	this.data = audioData;
+    	this.dataLen = data.length;
+    	this.hasMoreData = true;
+    }
+
+    //might be a 'this' problem here
+    needMoreSamples(e) {
 		if (!hasMoreData) {
 			return;
 		}
-		var output  = e.outputBuffer.getChannelData(0);
-		var len = output.length;
-		for (let i=0 ; i < len ; i++) {
-			if (dataIdx >= dataLen) {
+		let output  = e.outputBuffer.getChannelData(0);
+		let olen = output.length;
+		let didx = this.dataIdx;
+		let dlen = this.dataLen;
+		let d = this.data;
+		for (let i=0 ; i < olen ; i++) {
+			if (didx >= dlen) {
 				output[i] = 0;
 				hasMoreData = false;
 			} else {
-				output[i] = data[dataIdx++];
+				output[i] = d[didx++];
 			}
 		}
+		this.dataIdx = didx;
 	}
     
-    this.start = function() {
-        var bufferSize = 4096;
-        var outputNode = keep(actx.createScriptProcessor(bufferSize, 0, 1));
-        outputNode.onaudioprocess = needMoreSamples;
-        outputNode.connect(actx.destination);
-    };
+    start() {
+        let bufferSize = 4096;
+        let outputNode = this.keep(this.actx.createScriptProcessor(bufferSize, 0, 1));
+        outputNode.onaudioprocess = this.needMoreSamples;
+        /*
+        let filterNode = this.actx.createBiquadFilter();
+        filterNode.type = "lowpass";
+        filterNode.frequency.value = 1600;   //freq in Hz
+        filterNode.gain.value = 25;
+        outputNode.(filterNode);
+        filterNode.connect(this.actx.destination);
+        */
+        outputNode.connect(this.actx.destination);
+    }
 
-       
 } //AudioOutput
 
 export {AudioOutput};
