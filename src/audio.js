@@ -19,10 +19,9 @@
 
 
 /**
- * Getting this to work with interpolation isn't easy
+ * HTML5 audio output class
  */
 class AudioOutput {
-
 
     constructor(par) {
         this.par = par;
@@ -35,16 +34,13 @@ class AudioOutput {
                 return node;
             };
         }());
-        this.actx = new AudioContext();
-        this.sampleRate = this.actx.sampleRate;
+        this.ctx = new AudioContext();
+        this.sampleRate = this.ctx.sampleRate;
         this.dataIdx = 0;
         this.data = [];
         this.dataLen = 0;
         this.hasMoreData = false;
     }
-
-
-    
 
     send(audioData) {
     	this.dataIdx = 0;
@@ -76,17 +72,17 @@ class AudioOutput {
     
     start() {
         let bufferSize = 4096;
-        let outputNode = this.keep(this.actx.createScriptProcessor(bufferSize, 0, 1));
+        let outputNode = this.keep(this.ctx.createScriptProcessor(bufferSize, 0, 1));
         outputNode.onaudioprocess = this.needMoreSamples;
         /*
-        let filterNode = this.actx.createBiquadFilter();
+        let filterNode = this.ctx.createBiquadFilter();
         filterNode.type = "lowpass";
         filterNode.frequency.value = 1600;   //freq in Hz
         filterNode.gain.value = 25;
         outputNode.(filterNode);
-        filterNode.connect(this.actx.destination);
+        filterNode.connect(this.ctx.destination);
         */
-        outputNode.connect(this.actx.destination);
+        outputNode.connect(this.ctx.destination);
     }
 
 } //AudioOutput
