@@ -191,7 +191,7 @@ function FFTSR(N) {
     var xr = new Float32Array(N);
     var xi = new Float32Array(N);
     var ZEROES = new Float32Array(N);
-    
+
 
     /**
      * Real samples
@@ -201,7 +201,7 @@ function FFTSR(N) {
         xi.set(ZEROES);
         compute();
     }
-    
+
     /**
      * Complex samples
      */
@@ -213,8 +213,20 @@ function FFTSR(N) {
         }
         compute();
     }
-    
-    
+
+    /**
+     * Complex samples
+     */
+    function applyXInv(input) {
+        for (var idx=0 ; idx<N ; idx++) {
+            var cx = input[idx];
+            xr[idx] = cx.r; // * W[idx];
+            xi[idx] = -cx.i;
+        }
+        compute();
+    }
+
+
     function compute() {
         var ix, id, i0, i1, i2, i3;
         var j,k;
@@ -357,6 +369,29 @@ function FFTSR(N) {
     }
     this.powerSpectrumX = powerSpectrumX;
 
+    function computePowerSpectrumInv(ps) {
+        var len = N2;
+        var indices = bitReversedIndices;
+        for (var j=0 ; j<len ; j++) {
+            var bri = indices[j];
+            var r = xr[bri];
+            var i = -xi[bri];
+            ps[j] = r*r + i*i;
+        }
+    }
+
+    function powerSpectrumInv(input, ps) {
+        apply(input);
+        computePowerSpectrumInv(ps);
+    }
+    this.powerSpectrumInv = powerSpectrumInv;
+
+    function powerSpectrumXInv(input, ps) {
+        applyXInv(input);
+        computePowerSpectrumInv(ps);
+    }
+    this.powerSpectrumXInv = powerSpectrumXInv;
+
 
 } //FFTSR
 
@@ -368,16 +403,16 @@ function SimpleGoertzel(frequency, binWidth, sampleRate) {
     //how many bins would there be for this binWidth? Integer
     var N     = (sampleRate / binWidth) | 0;
     //which bin out of N are we? Must be an integer.
-    var bin   = (0.5 + frequency / sampleRate * N) | 0; 
+    var bin   = (0.5 + frequency / sampleRate * N) | 0;
     var w     = 2.0 * Math.PI / N * bin;  //omega
     var wr    = Math.cos(w);
     var wr2   = 2.0 * wr;
     var wi    = Math.sin(w);
     var pr1=0, pr2=0, pi1=0, pi2=0;
     var damping = 0.999;
-    
+
     this.N = N;
-    
+
     this.reset = function() {
         pr1=0; pr2=0; pi1=0; pi2=0;
     };
@@ -393,14 +428,14 @@ function SimpleGoertzel(frequency, binWidth, sampleRate) {
         var reali = wi * pr1;
         var imagr = wr * pi1 - p12;
         var imagi = wi * pi1;
-        return {r:realr-imagi, i:reali+imagr}; 
+        return {r:realr-imagi, i:reali+imagr};
     };
 
     //faster for power spectrum
     this.mag = function() {
         return pr1 * pr1 + pr2 * pr2;
     };
-    
+
     //correct
     this.mag2 = function() {
         return pr1 * pr1 + pr2 * pr2 - wr2 * pr1 * pr2;
@@ -433,5 +468,3 @@ function SimpleGoertzel(frequency, binWidth, sampleRate) {
 
 
 export {FFT,FFTSR,SimpleGoertzel};
-
-
